@@ -39,11 +39,11 @@ def fill(board, value, i, j):
     return board
 
 
-def is_solution(board, line_values):
+def is_solution(board, i, line_values):
     sequence_size = 0
     values = line_values[:]
     for j in range(len(lines)):
-        if board[0][j] == 'O':
+        if board[i][j] == 'O':
             sequence_size += 1
         else:
             if values[0] == sequence_size:
@@ -58,14 +58,20 @@ def is_solution(board, line_values):
     return False
 
 
-def evaluate(board, k_0, j_0):
-    if is_solution(board, lines[0]):
+def evaluate(board):
+    for i in range(len(lines)):
+        for j in range(len(columns)):
+            evaluate_rec(board, i, j)
+
+
+def evaluate_rec(board, i_0, j_0, k_0=0):
+    if is_solution(board, i_0, lines[i_0]):
         print(board)
-    if k_0 > len(lines[0]) - 1:
+    if k_0 > len(lines[i_0]) - 1:
         return
     for j in range(j_0, len(columns)):
-        if fits(board, lines[0][k_0], 0, j):
-            evaluate(fill(board, lines[0][k_0], 0, j), k_0+1, j)
+        if fits(board, lines[i_0][k_0], 0, j):
+            evaluate_rec(fill(board, lines[0][k_0], i_0, j), i_0, j, k_0+1)
 
 
-evaluate(start_board, 0, 0)
+evaluate(start_board)
