@@ -1,77 +1,36 @@
-import copy
-
-lines = [[3, 1], [3, 1], [0], [0], [0]]
+lines = [[3], [3], [0], [0], [0]]
 columns = [[0], [0], [0], [0], [0]]
 
-start_board = [['.', '.', '.', '.', '.'],
-               ['.', '.', '.', '.', '.'],
-               ['.', '.', '.', '.', '.'],
-               ['.', '.', '.', '.', '.'],
-               ['.', '.', '.', '.', '.']]
+board = [['.', '.', '.', '.', '.'],
+         ['.', '.', '.', '.', '.'],
+         ['.', '.', '.', '.', '.'],
+         ['.', '.', '.', '.', '.'],
+         ['.', '.', '.', '.', '.']]
 
 
-def fits(board, value, i, j):
-    if i >= len(lines):
-        return False
-    if j >= len(columns):
-        return False
-    if len(lines) - j < value:
-        return False
-    if board[i][j] == 'X':
-        return False
-    if board[i][j] == 'O':
-        return False
-    if board[i][j] == '.':
-        if value == 1:
-            return True
-        else:
-            return fits(board, value-1, i, j+1)
-
-
-def fill(board, value, i, j):
-    board = copy.deepcopy(board)
-    for k in range(value):
-        board[i][j+k] = 'O'
-    if j > 0:
-        board[i][j-1] = 'X'
-    if j+value < len(columns):
-        board[i][j+value] = 'X'
-    return board
-
-
-def is_solution(board, i, line_values):
-    sequence_size = 0
-    values = line_values[:]
-    for j in range(len(lines)):
-        if board[i][j] == 'O':
-            sequence_size += 1
-        else:
-            if values[0] == sequence_size:
-                sequence_size = 0
-                values.pop(0)
-                if len(values) == 0:
-                    return True
-    if values[0] == sequence_size:
-        values.pop(0)
-        if len(values) == 0:
-            return True
+def is_solved():
     return False
 
 
-def evaluate(board):
+def try_to_fill_line(i):
+    minimum_filling = sum(lines[i]) + (len(lines[i]) - 1)
+    if minimum_filling <= len(columns)//2:
+        return False
+    if len(lines[i]) == 1:
+        padding = len(columns) - lines[i][0]
+        start = padding
+        end = len(columns) - padding - 1
+        for j in range(start, end + 1):
+            board[i][j] = 'O'
+        return True
+    return False
+
+
+altered = True
+while altered:
+    altered = False
     for i in range(len(lines)):
-        for j in range(len(columns)):
-            evaluate_rec(board, i, j)
-
-
-def evaluate_rec(board, i_0, j_0, k_0=0):
-    if is_solution(board, i_0, lines[i_0]):
-        print(board)
-    if k_0 > len(lines[i_0]) - 1:
-        return
-    for j in range(j_0, len(columns)):
-        if fits(board, lines[i_0][k_0], 0, j):
-            evaluate_rec(fill(board, lines[0][k_0], i_0, j), i_0, j, k_0+1)
-
-
-evaluate(start_board)
+        altered = try_to_fill_line(i)
+    # para cada coluna
+        # tentar preencher
+    print(board)
